@@ -31,11 +31,11 @@ class UploadHelper extends AppHelper {
 			if ($edit) {
 				$baseEncFile = base64_encode ($file);
 				$delUrl = "$webroot/uploads/delete/$baseEncFile/";			
-				$str .= "<a href='$delUrl'><img src='" . Router::url("/") . 
+				$str .= "<a href='$delUrl' class='file-delete-link'><img src='" . Router::url("/") . 
 					"ajax_multi_upload/img/delete.png' alt='Delete' /></a> ";
 			}
 			$str .= "<img src='" . Router::url("/") . "ajax_multi_upload/img/fileicons/$type.png' /> ";
-			$str .= "<a href='$url'>" . $f . "</a> ($filesize)";
+			$str .= "<a href='$url' class='file-link'>" . $f . "</a> ($filesize)";
 			$str .= "<br />\n";
 		}
 		$str .= "</dd>\n"; 
