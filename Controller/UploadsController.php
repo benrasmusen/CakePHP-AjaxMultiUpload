@@ -9,14 +9,23 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  *                and/or GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
  */
- 
+
 class UploadsController extends AjaxMultiUploadAppController {
 
 	public $name = "Upload";
 	public $uses = null;
 
+	public $components = array('RequestHandler');
+
 	// list of valid extensions, ex. array("jpeg", "xml", "bmp")
 	var $allowedExtensions = array();
+
+	function beforeFilter() {
+		if ($this->RequestHandler->isAjax()) {
+			$this->Security->csrfCheck = false;
+			$this->Security->validatePost = false;
+		}
+	}
 
 	function upload($dir=null) {
        	require_once (ROOT . DS . APP_DIR . "/Plugin/AjaxMultiUpload/Config/bootstrap.php");
@@ -30,7 +39,7 @@ class UploadsController extends AjaxMultiUploadAppController {
                 $this->layout = "ajax";
 	        Configure::write('debug', 0);
 		$directory = WWW_ROOT . DS . $relPath;
- 
+
 		if ($dir === null) {
 			$this->set("result", "{\"error\":\"Upload controller was passed a null value.\"}");
 			return;
@@ -41,7 +50,7 @@ class UploadsController extends AjaxMultiUploadAppController {
 		if (!file_exists($dir)) {
 			mkdir($dir, 0777, true);
 		}
-		$uploader = new qqFileUploader($this->allowedExtensions, 
+		$uploader = new qqFileUploader($this->allowedExtensions,
 			$sizeLimit);
 		$result = $uploader->handleUpload($dir);
 		$this->set("result", htmlspecialchars(json_encode($result), ENT_NOQUOTES));
@@ -61,15 +70,15 @@ class UploadsController extends AjaxMultiUploadAppController {
 		$file = base64_decode($file);
 		if(file_exists($file)) {
 			if(unlink($file)) {
-				$this->Session->setFlash(__('File deleted!'));				
+				$this->Session->setFlash(__('File deleted!'));
 			} else {
-				$this->Session->setFlash(__('Unable to delete File'));					
+				$this->Session->setFlash(__('Unable to delete File'));
 			}
 		} else {
-			$this->Session->setFlash(__('File does not exist!'));					
+			$this->Session->setFlash(__('File does not exist!'));
 		}
-		
-		$this->redirect($this->referer());	
+
+		$this->redirect($this->referer());
 	}
 }
 
